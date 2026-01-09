@@ -12,18 +12,19 @@ body {
   color: #fff;
 }
 
+/* Header */
 header {
   background: #4b2f22;
   padding: 20px;
   text-align: center;
 }
 
+/* Products */
 .products {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
   padding: 20px;
-  margin-right: 320px;
 }
 
 .card {
@@ -57,20 +58,29 @@ header {
   color: #2b1e16;
 }
 
+/* Cart */
 #cart {
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 300px;
-  height: 100%;
   background: #24170f;
   padding: 20px;
-  overflow-y: auto;
+  margin: 20px;
+  border-radius: 12px;
 }
 
 .cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid #555;
-  padding: 10px 0;
+  padding: 8px 0;
+}
+
+.cart-item button {
+  background: #8b0000;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .checkout {
@@ -108,18 +118,6 @@ header {
   color: #c7a76c;
 }
 
-.popup-box a {
-  display: inline-block;
-  margin-top: 10px;
-  color: #c7a76c;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-.popup-box a:hover {
-  text-decoration: underline;
-}
-
 .popup-box button {
   margin-top: 15px;
   background: #c7a76c;
@@ -130,10 +128,44 @@ header {
   font-weight: bold;
   cursor: pointer;
 }
+
+/* Welcome Screen */
+#welcomeScreen {
+  position: fixed;
+  inset: 0;
+  background: #2b1e16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  text-align: center;
+}
+
+#welcomeScreen button {
+  margin-top: 20px;
+  background:#c7a76c;
+  color:#2b1e16;
+  border:none;
+  padding:12px 20px;
+  font-size:16px;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+}
 </style>
 </head>
 
 <body>
+
+<!-- Welcome Screen -->
+<div id="welcomeScreen">
+  <div>
+    <h1 style="color:#c7a76c;">Welcome to</h1>
+    <h2>Laksha Ice Cream Kada 🍫</h2>
+    <p>Only Chocolate Flavoured Products</p>
+    <button onclick="enterSite()">Tap to Enter</button>
+  </div>
+</div>
 
 <header>
   <h1>Laksha Ice Cream Kada</h1>
@@ -142,19 +174,18 @@ header {
 
 <main class="products" id="productGrid"></main>
 
-<aside id="cart">
+<section id="cart">
   <h2>Your Cart</h2>
   <div id="cartItems"></div>
   <h3 id="cartTotal">Total: ₹0</h3>
   <button class="checkout" onclick="checkout()">Checkout</button>
-</aside>
+</section>
 
 <!-- Popup -->
 <div id="popupOverlay" class="popup-overlay">
   <div class="popup-box">
     <h2>Thank You!</h2>
     <p id="popupMessage"></p>
-    <a href="gallery.html">,uuuhg=</a>
     <button onclick="closePopup()">OK</button>
   </div>
 </div>
@@ -165,23 +196,23 @@ const PRODUCTS = [
   {name:"Dark Chocolate Ice Cream", price:169, img:"https://images.pexels.com/photos/12051654/pexels-photo-12051654.jpeg"},
   {name:"Belgium Chocolate", price:199, img:"https://images.pexels.com/photos/2067396/pexels-photo-2067396.jpeg"},
   {name:"Chocolate Milkshake", price:129, img:"https://images.pexels.com/photos/15529723/pexels-photo-15529723.jpeg"},
+  {name:"Hot Chocolate", price:120, img:"https://images.pexels.com/photos/2171643/pexels-photo-2171643.jpeg"},
   {name:"Chocolate Waffle", price:159, img:"https://images.pexels.com/photos/34964948/pexels-photo-34964948.jpeg"},
   {name:"Chocolate Brownie", price:159, img:"https://images.pexels.com/photos/887853/pexels-photo-887853.jpeg"},
   {name:"Chocolate Cone", price:119, img:"https://images.pexels.com/photos/13701347/pexels-photo-13701347.jpeg"},
-  {name:"Chocolate Bar", price:189, img:"https://images.pexels.com/photos/7538069/pexels-photo-7538069.jpeg"},
   {name:"Chocolate Cake", price:249, img:"https://images.pexels.com/photos/4109996/pexels-photo-4109996.jpeg"},
-  {name:"Chocolate Truffle Cake", price:299, img:"https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg"},
-  {name:"Chocolate Lava Cake", price:279, img:"https://images.pexels.com/photos/33813614/pexels-photo-33813614.jpeg"},
-  {name:"Choco Chips", price:99, img:"https://images.pexels.com/photos/13921501/pexels-photo-13921501.jpeg"},
-  {name:"Choco Pie", price:109, img:"https://images.pexels.com/photos/3026807/pexels-photo-3026807.jpeg"},
-  {name:"Chocolate Mousse", price:189, img:"https://images.pexels.com/photos/3026806/pexels-photo-3026806.jpeg"},
-  {name:"Extra Dark Chocolate", price:199, img:"https://images.pexels.com/photos/918327/pexels-photo-918327.jpeg"}
+  {name:"Chocolate Lava Cake", price:279, img:"https://images.pexels.com/photos/33813614/pexels-photo-33813614.jpeg"}
 ];
 
 const cart = [];
 
+function enterSite() {
+  document.getElementById("welcomeScreen").style.display = "none";
+}
+
 function renderProducts() {
   const grid = document.getElementById("productGrid");
+  grid.innerHTML = "";
   PRODUCTS.forEach((p, i) => {
     grid.innerHTML += `
       <div class="card">
@@ -211,10 +242,16 @@ function updateCart() {
       <div class="cart-item">
         <span>${item.name}</span>
         <span>₹${item.price}</span>
+        <button onclick="removeFromCart(${i})">Remove</button>
       </div>`;
   });
 
   document.getElementById("cartTotal").innerText = "Total: ₹" + total;
+}
+
+function removeFromCart(i) {
+  cart.splice(i,1);
+  updateCart();
 }
 
 function checkout() {
@@ -222,9 +259,8 @@ function checkout() {
     showPopup("Your cart is empty!");
     return;
   }
-
   let total = cart.reduce((s,i)=>s+i.price,0);
-  showPopup("Thank you for shopping! Total: ₹" + total);
+  showPopup(`Thank you for shopping at Laksha Ice Cream Kada!<br><br><strong>Total: ₹${total}</strong>`);
   cart.length = 0;
   updateCart();
 }
